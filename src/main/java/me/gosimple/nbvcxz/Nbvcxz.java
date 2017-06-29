@@ -10,7 +10,7 @@ import me.gosimple.nbvcxz.resources.FeedbackUtil;
 import me.gosimple.nbvcxz.resources.Generator;
 import me.gosimple.nbvcxz.scoring.Result;
 import me.gosimple.nbvcxz.scoring.TimeEstimate;
-
+import me.gosimple.nbvcxz.utils.MapStringLongComparator;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -18,14 +18,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
-import java.util.stream.Collectors;
 
 /**
  * This class allows you to do estimates on passwords.  It can be instantiated and configured once, and the same
@@ -213,11 +211,9 @@ public class Nbvcxz
         {
             System.out.println(resourceBundle.getString("main.feedback.suggestion") + " " + suggestion);
         }
-        Map<String, Long> sortedMap =
-                result.getConfiguration().getGuessTypes().entrySet().stream()
-                        .sorted(Map.Entry.comparingByValue())
-                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
-                                (e1, e2) -> e1, LinkedHashMap::new));
+
+        Map<String, Long> sortedMap = MapStringLongComparator.sortByValue(result.getConfiguration().getGuessTypes());
+
         for (Map.Entry<String, Long> guessType : sortedMap.entrySet())
         {
             System.out.println(resourceBundle.getString("main.timeToCrack") + " " + guessType.getKey() + ": " + TimeEstimate.getTimeToCrackFormatted(result, guessType.getKey()));
@@ -287,7 +283,8 @@ public class Nbvcxz
         {
             List<Match> matches = new ArrayList<>();
             backfillBruteForce(password, brute_force_matches, matches);
-            matches.sort(comparator);
+
+            Collections.sort(matches, comparator);
             return matches;
         }
         Collections.sort(all_matches, comparator);
@@ -402,7 +399,8 @@ public class Nbvcxz
                     }
                 }
             }
-            forward_non_intersecting_matches.sort(comparator);
+
+            Collections.sort(forward_non_intersecting_matches, comparator);
             non_intersecting_matches.put(match, forward_non_intersecting_matches);
         }
 
@@ -427,16 +425,17 @@ public class Nbvcxz
                 seed_matches.add(match);
             }
         }
-        seed_matches.sort(comparator);
+
+        Collections.sort(seed_matches, comparator);
+        List<Match> emptyList = new ArrayList<>();
 
         // Run the recursive function for each seed, and the lowest entropy matches will be set with the best combination.
         for (Match match : seed_matches)
         {
-            generateMatches(start_time, password, match, non_intersecting_matches, brute_force_matches, new ArrayList<>(), 0);
+            generateMatches(start_time, password, match, non_intersecting_matches, brute_force_matches, emptyList, 0);
         }
 
-        best_matches.sort(comparator);
-
+        Collections.sort(best_matches, comparator);
         return best_matches;
     }
 

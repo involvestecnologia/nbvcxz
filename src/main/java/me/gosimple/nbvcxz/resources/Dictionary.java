@@ -1,5 +1,7 @@
 package me.gosimple.nbvcxz.resources;
 
+import me.gosimple.nbvcxz.utils.ListStringComparator;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -37,18 +39,14 @@ public class Dictionary
         this.exclusion = exclusion;
 
         // This is to optimize the distance calculation stuff
-        this.sorted_dictionary = new ArrayList<>(this.dictonary.keySet());
-        this.sorted_dictionary.sort(Comparator.comparing(String::length).thenComparing(String::compareTo));
+        ArrayList<String> unsorted_dictionary = new ArrayList<>(this.dictonary.keySet());
+        this.sorted_dictionary = ListStringComparator.order(unsorted_dictionary);
         this.sorted_dictionary_length_lookup = new HashMap<>();
-        for (int i = 0; i < sorted_dictionary.size(); i++)
-        {
+        for (int i = 0; i < sorted_dictionary.size(); i++) {
             String key = sorted_dictionary.get(i);
-            if (sorted_dictionary_length_lookup.containsKey(key.length()))
-            {
+            if (sorted_dictionary_length_lookup.containsKey(key.length())) {
                 continue;
-            }
-            else
-            {
+            } else {
                 sorted_dictionary_length_lookup.put(key.length(), i);
             }
         }
