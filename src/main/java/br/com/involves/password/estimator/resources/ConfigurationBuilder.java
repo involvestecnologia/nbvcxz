@@ -1,14 +1,15 @@
 package br.com.involves.password.estimator.resources;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.temporal.ChronoUnit;
 
 import br.com.involves.password.estimator.matching.DateMatcher;
 import br.com.involves.password.estimator.matching.DictionaryMatcher;
